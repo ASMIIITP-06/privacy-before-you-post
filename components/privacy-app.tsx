@@ -189,7 +189,7 @@ export default function PrivacyApp(): JSX.Element {
   const showSection = (id: string) => { if (view !== 'home') navigate('home'); window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 80); };
   const startSession = () => { const next = createSession(); sessionStorage.setItem('pbyp-session', JSON.stringify(next)); setSession(next); setQueue([]); setText(''); setSocial({ caption: '', hashtags: '', location: '', altText: '' }); setResult(null); setSubmitted([]); setHistory([]); navigate('analyze'); };
   const endSession = () => { queueRef.current.forEach((item) => { if (item.preview) URL.revokeObjectURL(item.preview); }); sessionStorage.removeItem('pbyp-session'); setSession(null); setQueue([]); setText(''); setSocial({ caption: '', hashtags: '', location: '', altText: '' }); setResult(null); setSubmitted([]); setHistory([]); setAnalysisStatus(null); navigate('closed'); };
-  const signOut = async () => { endSession(); const { error } = await supabase.auth.signOut(); if (error) setNotice('Could not sign out. Please try again.'); };
+  const signOut = async () => { endSession(); if (!supabase) return; const { error } = await supabase.auth.signOut(); if (error) setNotice('Could not sign out. Please try again.'); };
   const readPdf = async (id: string, file: File) => {
     try {
       const extraction = await extractPdfText(file);

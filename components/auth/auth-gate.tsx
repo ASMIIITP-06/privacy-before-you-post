@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { Check, LockKeyhole, Shield } from 'lucide-react';
+import { Check, CircleAlert, LockKeyhole, Shield } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 type AuthMode = 'signin' | 'signup';
@@ -22,6 +22,20 @@ export function AuthGate(): JSX.Element {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  if (!supabase) {
+    return (
+      <main className="auth-page">
+        <section className="auth-card" aria-labelledby="auth-setup-title">
+          <span className="auth-card-icon"><CircleAlert size={18} /></span>
+          <h2 id="auth-setup-title">Sign-in is not set up yet</h2>
+          <p className="auth-lede">This site needs its database connection before people can sign in. Add the NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY settings in your hosting environment, then redeploy.</p>
+        </section>
+      </main>
+    );
+  }
+
+  const client = supabase;
 
   const switchMode = (next: AuthMode) => {
     setMode(next);
@@ -46,8 +60,8 @@ export function AuthGate(): JSX.Element {
     setMessage(null);
 
     const result = mode === 'signin'
-      ? await supabase.auth.signInWithPassword({ email: trimmedEmail, password })
-      : await supabase.auth.signUp({ email: trimmedEmail, password });
+      ? await client.auth.signInWithPassword({ email: trimmedEmail, password })
+      : await client.auth.signUp({ email: trimmedEmail, password });
 
     setSubmitting(false);
     setPassword('');

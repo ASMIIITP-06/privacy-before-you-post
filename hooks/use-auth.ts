@@ -9,6 +9,10 @@ export function useAuth(): { user: User | null; loading: boolean } {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
     let active = true;
 
     supabase.auth.getSession().then(({ data }) => {
