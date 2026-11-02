@@ -206,7 +206,7 @@ export function analyzePrivacy(sources: AnalysisSource[]): AnalysisResult {
   }
 
   for (const source of sources) {
-    if (['image', 'video', 'pdf', 'document'].includes(source.kind) && !source.readError) {
+    if (['image', 'video', 'document'].includes(source.kind) && !source.readError) {
       pushFinding(RULES.metadata, 'File metadata may be present', source.name);
     }
   }
